@@ -69,4 +69,8 @@ jobs:
         env:
           RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
         run: |
-          curl -s -o /dev/null -w "%{http_code}" "$RENDER_DEPLOY_HOOK"
+          if [ -n "$RENDER_DEPLOY_HOOK" ]; then
+            curl -s -f -X POST "$RENDER_DEPLOY_HOOK" || true
+          else
+            echo "RENDER_DEPLOY_HOOK is not configured in GitHub Secrets yet. Skipping deploy trigger."
+          fi
